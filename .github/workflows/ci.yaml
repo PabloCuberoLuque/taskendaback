@@ -16,7 +16,7 @@ jobs:
       postgres:
         image: postgres:latest
         env:
-          POSTGRES_DB: taskenda
+          POSTGRES_DB: taskendaTest
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: usuario
         ports:
