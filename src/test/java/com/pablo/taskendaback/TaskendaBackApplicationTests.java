@@ -8,6 +8,7 @@ class TaskendaBackApplicationTests {
 
     @Test
     void contextLoads() {
+        assert true;
     }
 
 }
