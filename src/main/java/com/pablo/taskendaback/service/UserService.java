@@ -5,6 +5,7 @@ import com.pablo.taskendaback.repository.UserRepository;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -26,6 +27,10 @@ public class UserService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), java.util.List.of(authority));
     }
 
+    public User findByUsername(String username){
+        return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+    }
+
     public boolean existsByUsername(String username){
         return userRepository.existsByUsername(username);
     }
@@ -33,4 +38,10 @@ public class UserService implements UserDetailsService {
     public void save(User user){
         userRepository.save(user);
     }
+
+    public User getUserDetails(){
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return findByUsername(username);
+    }
+
 }

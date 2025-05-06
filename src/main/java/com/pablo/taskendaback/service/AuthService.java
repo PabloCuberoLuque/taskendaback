@@ -6,6 +6,10 @@ import com.pablo.taskendaback.jwt.JwtUtil;
 import com.pablo.taskendaback.model.Role;
 import com.pablo.taskendaback.model.User;
 import com.pablo.taskendaback.repository.RoleRepository;
+import com.pablo.taskendaback.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -21,20 +25,29 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final CookieService cookieService;
 
-    public AuthService(UserService userService, RoleRepository roleRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil,AuthenticationManagerBuilder authenticationManagerBuilder) {
+    @Autowired
+    public AuthService(UserService userService, RoleRepository roleRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil,AuthenticationManagerBuilder authenticationManagerBuilder,CookieService cookieService) {
         this.userService = userService;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
+        this.cookieService=cookieService;
     }
 
-    public String authenticate(String username, String password){
+    public String authenticate(String username, String password, HttpServletResponse response){
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
         Authentication authresult = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authresult);
-        return jwtUtil.generateToken(authresult);
+
+        String jwt = jwtUtil.generateToken(authresult);
+        cookieService.addHttpOnlyCookie("jwt",jwt,60*60*24*7,response);
+
+        User user = userService.findByUsername(username);
+
+        return user.getRole().getName().toString();
     }
 
     public void register(NewUserDto newUserDto){
@@ -46,4 +59,9 @@ public class AuthService {
         User user = new User(newUserDto.getUsername(),passwordEncoder.encode(newUserDto.getPassword()),newUserDto.getEmail(),roleUser);
         userService.save(user);
     }
+
+    public void logout(HttpServletResponse response){
+        cookieService.deleteCookie("jwt",response);
+    }
+
 }
