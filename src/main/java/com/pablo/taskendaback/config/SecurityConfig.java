@@ -29,14 +29,16 @@ public class SecurityConfig {
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http.cors(Customizer.withDefaults())
-            .csrf(AbstractHttpConfigurer::disable)
-            .authenticationProvider(authenticationProvider())
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/login", "/auth/register").permitAll()
-                .anyRequest().authenticated())
-            .httpBasic(Customizer.withDefaults())
-            .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtEntryPoint()))
-            .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        .csrf(csrf -> csrf
+            .ignoringRequestMatchers("/auth/login", "/auth/register")
+        )
+        .authenticationProvider(authenticationProvider())
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers("/auth/login", "/auth/register").permitAll()
+            .anyRequest().authenticated())
+        .httpBasic(Customizer.withDefaults())
+        .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtEntryPoint()))
+        .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     return http.build();
 }
 
