@@ -29,11 +29,11 @@ public class SecurityConfig {
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http.cors(Customizer.withDefaults())
         .csrf(csrf -> csrf
-            .ignoringRequestMatchers("/auth/login", "/auth/register")
+            .ignoringRequestMatchers("/auth/login", "/auth/register" , "auth/logout")
         )
         .authenticationProvider(authenticationProvider())
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/auth/login", "/auth/register").permitAll()
+            .requestMatchers("/auth/login", "/auth/register" , "auth/logout").permitAll()
             .anyRequest().authenticated())
         .httpBasic(Customizer.withDefaults())
         .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtEntryPoint()))
@@ -75,7 +75,7 @@ public class SecurityConfig {
 
         corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000"));
         corsConfiguration.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
-        corsConfiguration.setAllowedHeaders(List.of("Authorization","Content type", "*"));
+        corsConfiguration.setAllowedHeaders(List.of("Authorization","Content-type", "*"));
         corsConfiguration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

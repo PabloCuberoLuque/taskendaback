@@ -10,8 +10,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.crypto.SecretKey;
 
 @RestController
 @RequestMapping("/auth")
@@ -64,9 +67,8 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
-        System.out.println("Entra");
+        SecurityContextHolder.clearContext();
         authService.logout(response);
         return ResponseEntity.ok(new ApiMessage("Logged out successfully"));
     }
-
 }

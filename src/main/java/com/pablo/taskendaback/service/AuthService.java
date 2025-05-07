@@ -6,8 +6,6 @@ import com.pablo.taskendaback.jwt.JwtUtil;
 import com.pablo.taskendaback.model.Role;
 import com.pablo.taskendaback.model.User;
 import com.pablo.taskendaback.repository.RoleRepository;
-import com.pablo.taskendaback.repository.UserRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,7 +14,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.pablo.taskendaback.service.UserService;
+
+import java.util.List;
 
 @Service
 public class AuthService {
