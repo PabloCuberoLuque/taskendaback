@@ -19,7 +19,7 @@ public class CookieService {
     public void deleteCookie(String cookieName, HttpServletResponse response){
         Cookie cookie = new Cookie(cookieName,null);
         cookie.setHttpOnly(true);
-        //cookie.setSecure(true);
+        cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setMaxAge(0);
 
